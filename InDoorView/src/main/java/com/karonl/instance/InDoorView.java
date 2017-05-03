@@ -26,7 +26,8 @@ import java.util.concurrent.TimeUnit;
  * Created by karonl on 16/3/21.
  * 绘制图案的画板,可以直接通过xml生成对象,在没有设置canvas时绘制空白页,因此可以下载完图片再更新进去
  */
-public class InDoorView extends SurfaceView implements SurfaceHolder.Callback, View.OnTouchListener {
+public class InDoorView extends SurfaceView implements SurfaceHolder.Callback, View
+        .OnTouchListener {
 
     private static final float VELOCITY_MULTI = 1f;// 滑动速度加权，计算松手后移动距离
     private static final int FRAME_INTERVAL = 5;// 帧时间
@@ -64,11 +65,11 @@ public class InDoorView extends SurfaceView implements SurfaceHolder.Callback, V
     public void setAdapter(BitBuffer adapter) {
         this.adapter = adapter;
         //重新校准位置和放大倍数
-        if(screenHeight>0 && screenWidth>0) setAdapterInit();
+        if (screenHeight > 0 && screenWidth > 0) setAdapterInit();
 
     }
 
-    private void setAdapterInit(){
+    private void setAdapterInit() {
         adapter.setOnAdapterListener(new BitAdapter.AttrListener() {
             @Override
             public void onRefresh() {
@@ -88,7 +89,7 @@ public class InDoorView extends SurfaceView implements SurfaceHolder.Callback, V
         by = (screenHeight - mPicHeight) / 2;
     }
 
-    private void setScale(boolean changeFirst){
+    private void setScale(boolean changeFirst) {
         float scaleWidth = screenWidth / adapter.getBitBuffer().getWidth();
         float scaleHeight = screenHeight / adapter.getBitBuffer().getHeight();
         scale = scaleWidth > scaleHeight ? scaleHeight : scaleWidth;
@@ -128,7 +129,7 @@ public class InDoorView extends SurfaceView implements SurfaceHolder.Callback, V
      * 绘制图画
      */
     private void showBit() {
-        if(canPaint) {
+        if (canPaint) {
             long startTime = System.currentTimeMillis();
             synchronized (surfaceHolder) {
 
@@ -241,87 +242,91 @@ public class InDoorView extends SurfaceView implements SurfaceHolder.Callback, V
     private onClickMapListener maplistener;
 
     private void clickMap(MotionEvent event) {
-        if(adapter!=null)
-        for (PathUnit region : adapter.getPathUnit()) {
-            if (region.region.contains((int) ((event.getX() - bx) / scale), (int) ((event.getY() - by) / scale))) {
-                if (maplistener != null) maplistener.onClick(region);
+        if (adapter != null)
+            for (PathUnit region : adapter.getPathUnit()) {
+                if (region.region.contains((int) ((event.getX() - bx) / scale), (int) ((event
+                        .getY() - by) / scale))) {
+                    if (maplistener != null)
+                        maplistener.onClick(region);
+                }
             }
-        }
     }
 
     private int x, y;
+
     /**
      * 监听点击事件
      */
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        if(adapter != null)
-        switch (event.getAction() & MotionEvent.ACTION_MASK) {
-            case MotionEvent.ACTION_DOWN:
-                x = (int) event.getX();
-                y = (int) event.getY();
-                mClick = CLICK;
-                mStartPoint.set(event.getX(), event.getY());
-                mStatus = DRAG;
-                canPaint = true;
-                break;
-            case MotionEvent.ACTION_POINTER_DOWN:
-                float distance = spacing(event); //初始距离
-                if (distance > 5f) {
-                    mStatus = ZOOM;
-                    mStartDistance = distance;
-                }
-                canPaint = true;
-                break;
-            case MotionEvent.ACTION_MOVE:
-                if( Math.abs(x - event.getX()) < 3 || Math.abs(y - event.getY()) < 3 ){
-                    mClick = CLICK; // 防止手滑的误差
-                } else {
-                    if (mStatus == DRAG) {
-                        drawMap(event);
-                        mClick = DRAG;
-
-                        if (mVelocityTracker == null) {
-                            mVelocityTracker = VelocityTracker.obtain();
-                        }
-                        mVelocityTracker.addMovement(event);
-
+        if (adapter != null)
+            switch (event.getAction() & MotionEvent.ACTION_MASK) {
+                case MotionEvent.ACTION_DOWN:
+                    x = (int) event.getX();
+                    y = (int) event.getY();
+                    mClick = CLICK;
+                    mStartPoint.set(event.getX(), event.getY());
+                    mStatus = DRAG;
+                    canPaint = true;
+                    break;
+                case MotionEvent.ACTION_POINTER_DOWN:
+                    float distance = spacing(event); //初始距离
+                    if (distance > 5f) {
+                        mStatus = ZOOM;
+                        mStartDistance = distance;
+                    }
+                    canPaint = true;
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    if (Math.abs(x - event.getX()) < 3 || Math.abs(y - event.getY()) < 3) {
+                        mClick = CLICK; // 防止手滑的误差
                     } else {
-                        if (event.getPointerCount() == 1) return true;
-                        zoomMap(event);
-                        mClick = DRAG;
-                    }
-                }
-                break;
-            case MotionEvent.ACTION_UP:
+                        if (mStatus == DRAG) {
+                            drawMap(event);
+                            mClick = DRAG;
 
-                if(mClick == CLICK) { //点击图案
-                    clickMap(event);
-                    canPaint = false;
-                } else {
-                    //获得VelocityTracker对象，并且添加滑动对象
-                    int dx = 0;
-                    int dy = 0;
-                    if (mVelocityTracker != null) {
-                        mVelocityTracker.computeCurrentVelocity(100);
-                        dx = (int) (mVelocityTracker.getXVelocity() * VELOCITY_MULTI);
-                        dy = (int) (mVelocityTracker.getYVelocity() * VELOCITY_MULTI);
+                            if (mVelocityTracker == null) {
+                                mVelocityTracker = VelocityTracker.obtain();
+                            }
+                            mVelocityTracker.addMovement(event);
+
+                        } else {
+                            if (event.getPointerCount() == 1) return true;
+                            zoomMap(event);
+                            mClick = DRAG;
+                        }
                     }
-                    mScroller.startScroll((int) mStartPoint.x, (int) mStartPoint.y, dx, dy, 500);
-                    invalidate(); //触发computeScroll
-                    //回收VelocityTracker对象
-                    if (mVelocityTracker != null) {
-                        mVelocityTracker.clear();
+                    break;
+                case MotionEvent.ACTION_UP:
+
+                    if (mClick == CLICK) { //点击图案
+                        clickMap(event);
+                        canPaint = false;
+                    } else {
+                        //获得VelocityTracker对象，并且添加滑动对象
+                        int dx = 0;
+                        int dy = 0;
+                        if (mVelocityTracker != null) {
+                            mVelocityTracker.computeCurrentVelocity(100);
+                            dx = (int) (mVelocityTracker.getXVelocity() * VELOCITY_MULTI);
+                            dy = (int) (mVelocityTracker.getYVelocity() * VELOCITY_MULTI);
+                        }
+                        mScroller.startScroll((int) mStartPoint.x, (int) mStartPoint.y, dx, dy,
+                                500);
+                        invalidate(); //触发computeScroll
+                        //回收VelocityTracker对象
+                        if (mVelocityTracker != null) {
+                            mVelocityTracker.clear();
+                        }
                     }
-                }
 
 
-                break;
-            case MotionEvent.ACTION_POINTER_UP:
-                break;
-            default:
-                break;
-        }
+                    break;
+                case MotionEvent.ACTION_POINTER_UP:
+                    break;
+                default:
+                    break;
+            }
         return true;
     }
 
@@ -339,13 +344,12 @@ public class InDoorView extends SurfaceView implements SurfaceHolder.Callback, V
             bx += offsetX;
             by += offsetY;
             postInvalidate(); //相当于递归computeScroll();目的是触发computeScroll
-        } else if(mStatus == 1 && mClick == 1) {
+        } else if (mStatus == 1 && mClick == 1) {
             canPaint = false;
-            Log.d("scroll","finish");
+            Log.d("scroll", "finish");
         }
         super.computeScroll();
     }
-
 
 
     // 界面初始化
@@ -353,14 +357,15 @@ public class InDoorView extends SurfaceView implements SurfaceHolder.Callback, V
     public void surfaceCreated(SurfaceHolder holder) {
         screenWidth = this.getWidth();
         screenHeight = this.getHeight();
-        if(adapter!=null) setAdapterInit();
+        if (adapter != null) setAdapterInit();
         stopThread(false);
         canPaint = true;//初始化绘制
         looperRun();
     }
 
     @Override
-    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {}
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+    }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {

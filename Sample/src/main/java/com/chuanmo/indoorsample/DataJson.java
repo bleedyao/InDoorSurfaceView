@@ -1,5 +1,7 @@
 package com.chuanmo.indoorsample;
 
+import android.util.Log;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -9,6 +11,7 @@ import org.json.JSONTokener;
  * Created by karonl on 16/4/12.
  */
 public class DataJson {
+    private static final String TAG = "DataJson";
 
     String json = "{\"_id\":\"570cf77757a46030037d4c30\",\"areas\":" +
             "[{\"name\":\"H@M\",\"area\":[{\"x\":387.1,\"y\":392.1},{\"x\":404.1,\"y\":392.1}," +
@@ -61,7 +64,6 @@ public class DataJson {
         try {
             JSONObject jsonObject = (JSONObject) jsonTokener.nextValue();
             array = jsonObject.getJSONArray("areas");
-
         } catch (JSONException e) {
 
         }
@@ -75,6 +77,7 @@ public class DataJson {
         JSONObject json = null;
         try {
             json = (JSONObject) this.array.get(i);
+            Log.d(TAG, "DataJson: " + json.toString());
         } catch (JSONException e) {
 
         }

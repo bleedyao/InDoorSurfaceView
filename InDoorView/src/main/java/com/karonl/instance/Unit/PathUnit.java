@@ -22,7 +22,8 @@ public class PathUnit {
         int i = 0;
         path = new Path();
         for(PointF point : list){
-            if(i == 0)path.moveTo(point.x, point.y);
+            if(i == 0)
+                path.moveTo(point.x, point.y);
             path.lineTo(point.x, point.y);
             i++;
         }

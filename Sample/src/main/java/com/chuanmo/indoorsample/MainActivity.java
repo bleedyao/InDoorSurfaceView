@@ -98,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(PathUnit region) {
                 Log.e(this.getClass().getName(), "click");
                 AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
+                dialog.setCancelable(false);
                 dialog.setTitle("商店介绍");
                 dialog.setMessage("" + region.getName());
                 dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
