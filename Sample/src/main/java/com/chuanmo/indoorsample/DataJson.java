@@ -64,6 +64,7 @@ public class DataJson {
         try {
             JSONObject jsonObject = (JSONObject) jsonTokener.nextValue();
             array = jsonObject.getJSONArray("areas");
+
         } catch (JSONException e) {
 
         }
@@ -77,7 +78,6 @@ public class DataJson {
         JSONObject json = null;
         try {
             json = (JSONObject) this.array.get(i);
-            Log.d(TAG, "DataJson: " + json.toString());
         } catch (JSONException e) {
 
         }

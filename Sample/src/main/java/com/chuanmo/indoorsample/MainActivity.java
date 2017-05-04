@@ -1,5 +1,7 @@
 package com.chuanmo.indoorsample;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -7,14 +9,13 @@ import android.graphics.PointF;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import com.karonl.instance.Adapter.DataAdapter;
 import com.karonl.instance.InDoorView;
+import com.karonl.instance.Interface.FramesListener;
 import com.karonl.instance.Unit.PathUnit;
 
 import org.json.JSONArray;
@@ -25,10 +26,11 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
 
     private TextView textview;
     private DataAdapter adapter = new DataAdapter();
+
     private Bitmap bmp;
     List<PathUnit> unitList = new ArrayList<>();
 
@@ -113,7 +115,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        inDoorView.onFramesListener(new InDoorView.FramesListener() {
+        inDoorView.onFramesListener(new FramesListener() {
+
             @Override
             public void onRefresh(float number) {
                 handler.obtainMessage(0, (int) number, 0).sendToTarget();
