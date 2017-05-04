@@ -69,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     Thread.sleep(200);
                 } catch (InterruptedException e) {
+
                 }
 
                 //背景图
